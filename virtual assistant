@@ -33,6 +33,7 @@ def wishme():
 def take_command():
     global command
     # command = None
+    # command = ''
     try:
         # command = ''
         with sr.Microphone() as source:
