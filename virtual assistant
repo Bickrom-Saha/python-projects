@@ -1,0 +1,111 @@
+import speech_recognition as sr
+import pyttsx3  # python text to speech library
+import datetime
+import pywhatkit
+from mediawikiapi import MediaWikiAPI as mediawikiapi
+import wikipedia
+import pyjokes
+import webbrowser
+import os
+import smtplib
+
+listener = sr.Recognizer()
+jarvis = pyttsx3.init('sapi5')  # sapi5 = speech application programming interface developed by microsoft
+voices = jarvis.getProperty('voices')
+jarvis.setProperty('voice', voices[0].id)  # [0]= male [1]=female
+
+
+def talk(text):
+    jarvis.say(text)
+    jarvis.runAndWait()
+
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour < 12:
+        talk('Good morning boss')
+    elif hour >= 12 and hour < 18:
+        talk('Good afternoon boss')
+    else:
+        talk('Good night boss')
+
+
+def take_command():
+    global command
+    # command = None
+    try:
+        # command = ''
+        with sr.Microphone() as source:
+            print('listening....')
+            listener.phase_threshold = 1  # see recognizer documentation
+            # listener.non_speaking_duration = None
+            voice = listener.listen(source)
+            command = listener.recognize_google(voice).lower()  # language can be added in recognize_google(voice, language= 'en-US')
+            if 'jarvis' in command:
+                command = command.replace('jarvis', '')
+            print(command)
+            
+
+    except:
+        pass
+    return command
+ 
+
+# def sendEmail(to, content):
+#    server = smtplib.SMTP('smtp.gmail.com', 587)  # 587 is the port. and less secure app has to be permitted in gmail account.
+#    server.ehlo()
+#    server.starttls()
+#    server.login('my mail adress', 'my password')
+#    server.sendmail('my mail adress',to, content)
+#    server.close()
+
+def run(jarvis):
+    command = take_command()
+    if 'time' in command:
+        time = datetime.datetime.now().strftime('%I:%M %p')
+        print(time)
+        talk(time)
+    elif 'song' in command:
+        song = command.replace('play', '')
+        talk('playing' + song)
+        print(song)
+        pywhatkit.playonyt(song)
+    # elif 'tel me ' in command:
+    #     look_for = command.replace('tell me ', '')
+    #     info = mediawikiapi.summary(look_for, 2)
+    #     talk(info)
+    #     print(info)
+    elif 'joke' in command:
+        talk(pyjokes.get_joke())
+    elif 'open youtube' in command:
+        webbrowser.open('youtube.com')
+    elif 'open google' in command:
+        webbrowser.open('google.com')
+    elif ' music' in command:
+        music_dir = 'E:\\music\\audios'
+        songs = os.listdir(music_dir)
+        print(songs)
+        os.startfile(os.path.join(music_dir, songs[0]))  # random module can be added.
+
+    elif 'exit' in command:
+        talk('okey boss see you soon')
+        exit()
+
+    # elif 'open app' in command:
+    #    path=''
+    #    os.startfile(path)
+    # elif 'send email' in command:
+    #    try:
+    #        talk('what should I send')
+    #        talk('email has been sent')
+    #        semdEmail(to, content)
+    #    except:
+    #        talk('unable to send email. please check network')
+    else:
+        talk("this is what i found ")
+        pywhatkit.search(command)
+
+wishme()
+while True:
+    run(jarvis)
+    
