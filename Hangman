@@ -1,0 +1,100 @@
+import random
+HANGMANPICS = ['''
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ /    |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ / \  |
+      |
+=========''']
+
+
+word_list = ['current', 'camel', 'mouse']
+choosen_word= word_list[random.randint(0, len(word_list)-1)] #random.choice(word_list)
+
+count =0
+# max_count= len(choosen_word)
+max_count =6
+display =[]
+
+for x in choosen_word:
+    display.append('_')
+
+print(display)
+print(HANGMANPICS[count])
+
+while True:
+
+    guess= input('guess the letter:').lower()
+    count = count+1
+
+    for letter in choosen_word:
+
+        if letter == guess:
+
+            if letter not in display:
+                display[choosen_word.find(letter)] = guess
+            
+            else:
+                n_letter = choosen_word[choosen_word.find(letter)+1:].find(letter)
+                display[choosen_word.find(letter) + 1 + n_letter] = guess
+
+        else:        
+            pass
+    
+   
+    print(HANGMANPICS[count])
+    print(display)
+
+    if count == max_count:
+        break
+
+if display == list(choosen_word):
+    print('you won')
+else:
+    print('you lose')
+
+    
+   
